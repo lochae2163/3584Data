@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Governor KP Dashboard</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r121/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vanta/dist/vanta.globe.min.js"></script>
+</head>
+<body>
+    <div id="vanta-bg"></div>
+    <div class="container">
+        <h1>Governor KP Dashboard</h1>
+        <div class="chart-container">
+            <h2>Core / High-performing (200%+)</h2>
+            <canvas id="chartCore"></canvas>
+        </div>
+        <div class="chart-container">
+            <h2>Good Members (100–200%)</h2>
+            <canvas id="chartGood"></canvas>
+        </div>
+        <div class="chart-container">
+            <h2>Warning (50–100%)</h2>
+            <canvas id="chartWarning"></canvas>
+        </div>
+        <div class="chart-container">
+            <h2>Critical (0–50%)</h2>
+            <canvas id="chartCritical"></canvas>
+        </div>
+    </div>
+    <script src="main.js"></script>
+</body>
+</html>
