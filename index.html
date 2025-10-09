@@ -3,8 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Governor KP Dashboard</title>
+    <title>KP & Target Rate Analysis</title>
     <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r121/three.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/vanta/dist/vanta.globe.min.js"></script>
@@ -12,22 +13,38 @@
 <body>
     <div id="vanta-bg"></div>
     <div class="container">
-        <h1>Governor KP Dashboard</h1>
-        <div class="chart-container">
-            <h2>Core / High-performing (200%+)</h2>
-            <canvas id="chartCore"></canvas>
-        </div>
-        <div class="chart-container">
-            <h2>Good Members (100–200%)</h2>
-            <canvas id="chartGood"></canvas>
-        </div>
-        <div class="chart-container">
-            <h2>Warning (50–100%)</h2>
-            <canvas id="chartWarning"></canvas>
-        </div>
-        <div class="chart-container">
-            <h2>Critical (0–50%)</h2>
-            <canvas id="chartCritical"></canvas>
+        <h1>KP & Target Rate Analysis</h1>
+        <p class="subtitle">Visualization of earned KP after altar vs target rate for KD 3584 governors</p>
+        <div id="loading" class="loading">Loading data...</div>
+        <div class="charts-grid">
+            <div class="chart-card">
+                <h2><span class="icon">✅</span> Core / High-performing (200%+)</h2>
+                <div class="chart-wrapper">
+                    <canvas id="chartCore" aria-label="Scatter chart of Core performers with target rate 200% or higher"></canvas>
+                </div>
+                <p class="description green">These governors are performing well above expected targets</p>
+            </div>
+            <div class="chart-card">
+                <h2><span class="icon">✅</span> Good Members (100–200%)</h2>
+                <div class="chart-wrapper">
+                    <canvas id="chartGood" aria-label="Scatter chart of Good performers with target rate 100-200%"></canvas>
+                </div>
+                <p class="description green">These governors are performing above expected targets</p>
+            </div>
+            <div class="chart-card">
+                <h2><span class="icon">⚠️</span> Warning (50–100%)</h2>
+                <div class="chart-wrapper">
+                    <canvas id="chartWarning" aria-label="Scatter chart of Warning performers with target rate 50-100%"></canvas>
+                </div>
+                <p class="description yellow">These governors need attention to meet expected targets</p>
+            </div>
+            <div class="chart-card">
+                <h2><span class="icon">❌</span> Critical (0–50%)</h2>
+                <div class="chart-wrapper">
+                    <canvas id="chartCritical" aria-label="Scatter chart of Critical performers with target rate 0-50%"></canvas>
+                </div>
+                <p class="description red">These governors require immediate attention</p>
+            </div>
         </div>
     </div>
     <script src="main.js"></script>

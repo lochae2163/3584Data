@@ -14,34 +14,65 @@ VANTA.GLOBE({
 
 // Function to fetch CSV and parse
 async function fetchCSV() {
-    const response = await fetch('data/latest_data.csv');
-    const text = await response.text();
-    return text.split('\n').slice(1).map(row => {
-        const [name, earnedKP, targetRate] = row.split(',');
-        return {
-            name: name.trim(),
-            earnedKP: parseInt(earnedKP),
-            targetRate: parseFloat(targetRate) * 100
-        };
-    });
+    try {
+        const response = await fetch('data/latest_data.csv');
+        if (!response.ok) throw new Error('Failed to fetch CSV');
+        const text = await response.text();
+        return text.split('\n').slice(1).filter(row => row.trim()).map(row => {
+            const [name, earnedKP, targetRate] = row.split(',');
+            return {
+                name: name.trim(),
+                earnedKP: parseInt(earnedKP) || 0,
+                targetRate: parseFloat(targetRate) * 100 || 0
+            };
+        });
+    } catch (error) {
+        console.error('Error fetching CSV:', error);
+        document.getElementById('loading').innerText = 'Error loading data. Please try again.';
+        return [];
+    }
 }
 
-// Function to create a chart
-function createChart(ctx, data, color) {
+// Function to create gradient color
+function createGradient(ctx, colorStart, colorEnd) {
+    const gradient = ctx.createLinearGradient(0, 0, 0, 400); // Match canvas height
+    gradient.addColorStop(0, colorStart);
+    gradient.addColorStop(1, colorEnd);
+    return gradient;
+}
+
+// Function to create a scatter chart with gradient
+function createChart(ctx, data, baseColor, category) {
+    // Sort data by targetRate ascending
+    data.sort((a, b) => a.targetRate - b.targetRate);
+
     new Chart(ctx, {
-        type: 'bar',
+        type: 'scatter',
         data: {
-            labels: data.map(d => d.name),
             datasets: [{
-                label: 'Target Rate %',
-                data: data.map(d => d.targetRate),
-                backgroundColor: data.map(d => color(d.targetRate))
+                label: `Target Rate % (${category})`,
+                data: data.map(d => ({ x: d.targetRate, y: d.earnedKP / 1000000 })),
+                backgroundColor: ctx => createGradient(ctx.chart.ctx, baseColor.start, baseColor.end),
+                pointBorderColor: '#ffffff',
+                pointBorderWidth: 1,
+                pointRadius: 6,
+                pointHoverRadius: 8,
+                showLine: false
             }]
         },
         options: {
             responsive: true,
+            maintainAspectRatio: false,
+            animation: {
+                duration: 1200,
+                easing: 'easeOutCubic'
+            },
             plugins: {
                 tooltip: {
+                    enabled: true,
+                    backgroundColor: 'rgba(0, 0, 0, 0.8)',
+                    titleFont: { size: 14 },
+                    bodyFont: { size: 12 },
                     callbacks: {
                         label: function(context) {
                             const d = data[context.dataIndex];
@@ -51,24 +82,44 @@ function createChart(ctx, data, color) {
                 }
             },
             scales: {
-                y: {
-                    beginAtZero: true,
-                    max: 250,
+                x: {
+                    type: 'linear',
+                    position: 'bottom',
                     title: {
                         display: true,
-                        text: 'Target Rate %'
+                        text: 'Target Rate',
+                        color: '#ffffff',
+                        font: { size: 14 }
+                    },
+                    ticks: {
+                        callback: function(value) { return value + '%'; },
+                        color: '#ffffff',
+                        font: { size: 12 }
+                    },
+                    grid: {
+                        color: 'rgba(255, 255, 255, 0.1)'
+                    }
+                },
+                y: {
+                    title: {
+                        display: true,
+                        text: 'Earned KP (Millions)',
+                        color: '#ffffff',
+                        font: { size: 14 }
+                    },
+                    ticks: {
+                        callback: function(value) { return value + 'M'; },
+                        color: '#ffffff',
+                        font: { size: 12 }
+                    },
+                    grid: {
+                        color: 'rgba(255, 255, 255, 0.1)'
                     }
                 }
             }
         }
     });
 }
-
-// Color functions
-const coreColor = t => 'green';
-const goodColor = t => 'lightgreen';
-const warningColor = t => 'orange';
-const criticalColor = t => 'red';
 
 // Filter categories
 function categorizeData(data) {
@@ -80,15 +131,30 @@ function categorizeData(data) {
     };
 }
 
+// Color definitions with gradients
+const colors = {
+    core: { start: 'rgba(0, 100, 0, 0.9)', end: 'rgba(0, 255, 0, 0.6)' }, // Dark green to light green
+    good: { start: 'rgba(144, 238, 144, 0.9)', end: 'rgba(144, 238, 144, 0.6)' }, // Light green
+    warning: { start: 'rgba(255, 165, 0, 0.9)', end: 'rgba(255, 215, 0, 0.6)' }, // Orange
+    critical: { start: 'rgba(255, 0, 0, 0.9)', end: 'rgba(255, 99, 71, 0.6)' } // Red
+};
+
 // Main function
 async function init() {
+    const loading = document.getElementById('loading');
+    loading.classList.add('active');
+
     const data = await fetchCSV();
+    loading.classList.remove('active');
+
+    if (data.length === 0) return;
+
     const categories = categorizeData(data);
 
-    createChart(document.getElementById('chartCore').getContext('2d'), categories.core, coreColor);
-    createChart(document.getElementById('chartGood').getContext('2d'), categories.good, goodColor);
-    createChart(document.getElementById('chartWarning').getContext('2d'), categories.warning, warningColor);
-    createChart(document.getElementById('chartCritical').getContext('2d'), categories.critical, criticalColor);
+    createChart(document.getElementById('chartCore').getContext('2d'), categories.core, colors.core, 'Core');
+    createChart(document.getElementById('chartGood').getContext('2d'), categories.good, colors.good, 'Good');
+    createChart(document.getElementById('chartWarning').getContext('2d'), categories.warning, colors.warning, 'Warning');
+    createChart(document.getElementById('chartCritical').getContext('2d'), categories.critical, colors.critical, 'Critical');
 }
 
 init();
