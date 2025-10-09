@@ -18,11 +18,11 @@
         <div id="loading" class="loading">Loading data...</div>
         <div class="charts-grid">
             <div class="chart-card">
-                <h2><span class="icon">✅</span> Core / High-performing (200%+)</h2>
+                <h2><span class="icon">👑</span> Core / High-performing Members (200%+)</h2>
                 <div class="chart-wrapper">
                     <canvas id="chartCore" aria-label="Scatter chart of Core performers with target rate 200% or higher"></canvas>
                 </div>
-                <p class="description green">These governors are performing well above expected targets</p>
+                <p class="description green">These governors are the best</p>
             </div>
             <div class="chart-card">
                 <h2><span class="icon">✅</span> Good Members (100–200%)</h2>
@@ -44,6 +44,24 @@
                     <canvas id="chartCritical" aria-label="Scatter chart of Critical performers with target rate 0-50%"></canvas>
                 </div>
                 <p class="description red">These governors require immediate attention</p>
+            </div>
+        </div>
+        <div id="governors-table" class="table-container">
+            <h2>All Governors Summary</h2>
+            <div class="table-wrapper">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Earned KP</th>
+                            <th>Target Rate %</th>
+                            <th>Category</th>
+                        </tr>
+                    </thead>
+                    <tbody id="table-body">
+                        <!-- Data will be populated by JS -->
+                    </tbody>
+                </table>
             </div>
         </div>
     </div>

@@ -121,6 +121,30 @@ function createChart(ctx, data, baseColor, category) {
     });
 }
 
+// Function to populate the governors table with color-coded data
+function populateTable(data) {
+    const tbody = document.getElementById('table-body');
+    if (tbody) {
+        tbody.innerHTML = ''; // Clear existing rows
+        data.forEach(d => {
+            const row = document.createElement('tr');
+            const category = d.targetRate >= 200 ? 'Core' :
+                            d.targetRate >= 100 ? 'Good' :
+                            d.targetRate >= 50 ? 'Warning' : 'Critical';
+            const categoryColor = d.targetRate >= 200 ? '#22c55e' : // Core
+                                 d.targetRate >= 100 ? '#74d128' : // Good
+                                 d.targetRate >= 50 ? '#eab308' : '#ef4444'; // Warning, Critical
+            row.innerHTML = `
+                <td style="color: ${categoryColor}">${d.name}</td>
+                <td style="color: ${categoryColor}">${d.earnedKP.toLocaleString()}</td>
+                <td style="color: ${categoryColor}">${d.targetRate.toFixed(2)}%</td>
+                <td><span class="category-${category.toLowerCase()}">${category}</span></td>
+            `;
+            tbody.appendChild(row);
+        });
+    }
+}
+
 // Filter categories
 function categorizeData(data) {
     return {
@@ -147,7 +171,13 @@ async function init() {
     const data = await fetchCSV();
     loading.classList.remove('active');
 
-    if (data.length === 0) return;
+    if (data.length === 0) {
+        document.getElementById('loading').innerText = 'No data loaded. Check CSV file.';
+        return;
+    }
+
+    // Populate the table
+    populateTable(data);
 
     const categories = categorizeData(data);
 
