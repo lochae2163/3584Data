@@ -180,8 +180,8 @@ tr:hover {
 
 .category-core { color: #22c55e; font-weight: 600; }
 .category-good { color: #74d128; }
-.category-warning { color: #eab308; }
-.category-critical { color: #ef4444; }
+.category-ok { color: #eab308; }
+.category-warning { color: #ef4444; }
 
 /* Responsive adjustments */
 @media (max-width: 768px) {

@@ -130,7 +130,7 @@ function populateTable(data) {
             const row = document.createElement('tr');
             const category = d.targetRate >= 200 ? 'Core' :
                             d.targetRate >= 100 ? 'Good' :
-                            d.targetRate >= 50 ? 'Warning' : 'Critical';
+                            d.targetRate >= 50 ? 'OK' : 'Warning';
             const categoryColor = d.targetRate >= 200 ? '#22c55e' : // Core
                                  d.targetRate >= 100 ? '#74d128' : // Good
                                  d.targetRate >= 50 ? '#eab308' : '#ef4444'; // Warning, Critical
@@ -150,8 +150,8 @@ function categorizeData(data) {
     return {
         core: data.filter(d => d.targetRate >= 200),
         good: data.filter(d => d.targetRate >= 100 && d.targetRate < 200),
-        warning: data.filter(d => d.targetRate >= 50 && d.targetRate < 100),
-        critical: data.filter(d => d.targetRate < 50)
+        ok: data.filter(d => d.targetRate >= 50 && d.targetRate < 100),
+        warning: data.filter(d => d.targetRate < 50)
     };
 }
 
@@ -159,8 +159,8 @@ function categorizeData(data) {
 const colors = {
     core: { start: 'rgba(0, 100, 0, 0.9)', end: 'rgba(0, 255, 0, 0.6)' }, // Dark green to light green
     good: { start: 'rgba(144, 238, 144, 0.9)', end: 'rgba(144, 238, 144, 0.6)' }, // Light green
-    warning: { start: 'rgba(255, 165, 0, 0.9)', end: 'rgba(255, 215, 0, 0.6)' }, // Orange
-    critical: { start: 'rgba(255, 0, 0, 0.9)', end: 'rgba(255, 99, 71, 0.6)' } // Red
+    ok: { start: 'rgba(255, 165, 0, 0.9)', end: 'rgba(255, 215, 0, 0.6)' }, // Orange
+    warning: { start: 'rgba(255, 0, 0, 0.9)', end: 'rgba(255, 99, 71, 0.6)' } // Red
 };
 
 // Main function
@@ -183,8 +183,8 @@ async function init() {
 
     createChart(document.getElementById('chartCore').getContext('2d'), categories.core, colors.core, 'Core');
     createChart(document.getElementById('chartGood').getContext('2d'), categories.good, colors.good, 'Good');
+    createChart(document.getElementById('chartOK').getContext('2d'), categories.ok, colors.ok, 'OK');
     createChart(document.getElementById('chartWarning').getContext('2d'), categories.warning, colors.warning, 'Warning');
-    createChart(document.getElementById('chartCritical').getContext('2d'), categories.critical, colors.critical, 'Critical');
 }
 
 init();
